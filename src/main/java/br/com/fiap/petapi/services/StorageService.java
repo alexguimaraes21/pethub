@@ -1,6 +1,8 @@
 package br.com.fiap.petapi.services;
 
 import br.com.fiap.petapi.exceptions.StorageException;
+import br.com.fiap.petapi.models.Arquivo;
+import br.com.fiap.petapi.repositories.ArquivoRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,18 +19,53 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 @Slf4j
 @Service
 public class StorageService {
 
     private String basePath;
-
-    private final Path dstFolder;
+    ArquivoRepository arquivoRepository;
 
     @Autowired
-    public StorageService(Environment env) {
+    public StorageService(Environment env,
+                          ArquivoRepository arquivoRepository) {
         this.basePath = env.getProperty("app.upload.base-path");
+        this.arquivoRepository = arquivoRepository;
+    }
+
+    public void store(MultipartFile file, long fileId) {
+        Path dstFolder = this.createDstFolder();
+        try {
+            if(file.isEmpty()) {
+                throw new StorageException("Falha ao armazenar o arquivo. Arquivo vazio.");
+            }
+            Path destinationFile = dstFolder.resolve(Paths.get("file_" + fileId))
+                    .normalize().toAbsolutePath();
+            if (!destinationFile.getParent().equals(dstFolder.toAbsolutePath())) {
+                throw new StorageException("Não é possível armazenar os arquivos em diretórios diferentes do pré-definido.");
+            }
+            try(InputStream inputStream = file.getInputStream()) {
+                Files.copy(inputStream, destinationFile, StandardCopyOption.REPLACE_EXISTING);
+            }
+        } catch (IOException e) {
+            log.error("Erro ao armazenar o arquivo no sistema de arquivos.", e);
+            throw new StorageException("Erro ao armazenar o arquivo no sistema de arquivos", e);
+        }
+    }
+
+    public Path load(long fileId) {
+        Optional<Arquivo> arquivo = arquivoRepository.buscarPorId(fileId);
+        Path dstFolder = null;
+        if (arquivo.isPresent()) {
+            dstFolder = Paths.get(this.basePath + "/" + arquivo.get().getSubpasta());
+            return dstFolder.resolve("file_" + fileId);
+        }
+        return null;
+    }
+
+    private Path createDstFolder() {
         LocalDate localDate = LocalDate.now();
         DateTimeFormatter year = DateTimeFormatter.ofPattern("yyyy");
         String uploadPathYearSufix = localDate.format(year);
@@ -43,32 +80,7 @@ public class StorageService {
                 log.error("Erro ao criar diretório para armazenar os arquivos.", e);
             }
         }
-        log.warn(this.basePath);
         log.warn(basePath + "/" + uploadPathYearSufix + "/" + uploadPathMonthSufix);
-        this.dstFolder = dstFolder;
-    }
-
-    public void store(MultipartFile file, long fileId) {
-        try {
-            if(file.isEmpty()) {
-                throw new StorageException("Falha ao armazenar o arquivo. Arquivo vazio.");
-            }
-            Path destinationFile = this.dstFolder.resolve(Paths.get("file_" + fileId))
-                    .normalize().toAbsolutePath();
-            if (!destinationFile.getParent().equals(this.dstFolder.toAbsolutePath())) {
-                throw new StorageException("Não é possível armazenar os arquivos em diretórios diferentes do pré-definido.");
-            }
-            try(InputStream inputStream = file.getInputStream()) {
-                Files.copy(inputStream, destinationFile, StandardCopyOption.REPLACE_EXISTING);
-            }
-        } catch (IOException e) {
-            log.error("Erro ao armazenar o arquivo no sistema de arquivos.", e);
-            throw new StorageException("Erro ao armazenar o arquivo no sistema de arquivos", e);
-        }
-    }
-
-    public Path load(long fileId) {
-        log.info(this.dstFolder.resolve("file_" + fileId).toString());
-        return this.dstFolder.resolve("file_" + fileId);
+        return dstFolder;
     }
 }
