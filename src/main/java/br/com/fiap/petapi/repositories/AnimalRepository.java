@@ -7,6 +7,7 @@ import br.com.fiap.petapi.services.UsuarioService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -75,6 +76,45 @@ public class AnimalRepository extends AbstractRepository<Animal> {
         return animal;
     }
 
+    public Animal atualizar(Animal animal) {
+        KeyHolder holder = new GeneratedKeyHolder();
+        MapSqlParameterSource params = new MapSqlParameterSource();
+        params.addValue("nome", animal.getNome());
+        params.addValue("nomeCientifico", animal.getNomeCientifico());
+        params.addValue("nomeEspecie", animal.getNomeEspecie());
+        params.addValue("cor", animal.getCor());
+        params.addValue("codigoChip", animal.getCodigoChip());
+        params.addValue("codigoTatuagem", animal.getCodigoTatuagem());
+        params.addValue("dataNascimento", animal.getDataNascimento());
+        params.addValue("tamanhoPorte", animal.getTamanhoPorte());
+        params.addValue("peso", animal.getPeso());
+        params.addValue("temperamento", animal.getTemperamento());
+        params.addValue("raca", animal.getRaca());
+        params.addValue("pessoaId", animal.getPessoa().getId());
+        params.addValue("animalId", animal.getId());
+
+        String sql = "";
+        if (animal.getFoto() != null) {
+            params.addValue("foto", animal.getFoto().getId());
+            sql = "UPDATE " + Animal.TABLE_NAME + " SET nm_animal = :nome, nm_cientifico = :nomeCientifico, " +
+                    "nm_especie = :nomeEspecie, ds_cor = :cor, ds_chip = :codigoChip, ds_tatuagem = :codigoTatuagem, " +
+                    "dt_nascimento = :dataNascimento, ds_tamanho = :tamanhoPorte, nr_peso = :peso, " +
+                    "ds_temperamento = :temperamento, ds_raca = :raca WHERE cd_pessoa = :pessoaId AND cd_animal = :animalId";
+        } else {
+            sql = "INSERT INTO " + Animal.TABLE_NAME + " (nm_animal, nm_cientifico, nm_especie, ds_cor, ds_chip, ds_tatuagem, " +
+                    "dt_nascimento, ds_tamanho, nr_peso, ds_temperamento, cd_pessoa, ds_raca) " +
+                    "VALUES (:nome, :nomeCientifico, :nomeEspecie, :cor, :codigoChip, :codigoTatuagem, :dataNascimento, " +
+                    ":tamanhoPorte, :peso, :temperamento, :pessoaId, :raca)";
+        }
+
+        try {
+            namedParameterJdbcTemplate.update(sql, params);
+        } catch (DataAccessException e) {
+            log.error("Erro ao salvar o arquivo no banco de dados.", e);
+        }
+        return animal;
+    }
+
     @Override
     public Optional<Animal> buscarPorId(long id) {
         Optional<Usuario> usuario = usuarioService.retornaUsuarioAutenticado();
@@ -86,26 +126,30 @@ public class AnimalRepository extends AbstractRepository<Animal> {
                 " dt_nascimento, ds_tamanho, nr_peso, ds_temperamento, cd_pessoa, ds_raca, cd_arquivo" +
                 " FROM " + Animal.TABLE_NAME + " WHERE cd_animal = :id AND cd_pessoa = :pessoaId";
 
-        return this.namedParameterJdbcTemplate.queryForObject(
-                sql,
-                param,
-                (rs, rowNum) -> Optional.of(new Animal.Builder()
-                        .setId(rs.getLong("cd_animal"))
-                        .setNome(rs.getString("nm_animal"))
-                                .setNomeCientifico(rs.getString("nm_cientifico"))
-                                .setNomeEspecie(rs.getString("nm_especie"))
-                                .setCor(rs.getString("ds_cor"))
-                                .setCodigoChip(rs.getString("ds_chip"))
-                                .setCodigoTatuagem(rs.getString("ds_tatuagem"))
-                                .setDataNascimento(rs.getObject("dt_nascimento", LocalDate.class))
-                                .setTamanhoPorte(rs.getString("ds_tamanho"))
-                                .setPeso(rs.getDouble("nr_peso"))
-                                .setTemperamento(rs.getString("ds_temperamento"))
-                        .setFoto(new Arquivo.Builder()
-                                .setId(rs.getLong("cd_arquivo"))
-                                .build()
-                        ).build())
-        );
+        try {
+            return this.namedParameterJdbcTemplate.queryForObject(
+                    sql,
+                    param,
+                    (rs, rowNum) -> Optional.of(new Animal.Builder()
+                            .setId(rs.getLong("cd_animal"))
+                            .setNome(rs.getString("nm_animal"))
+                            .setNomeCientifico(rs.getString("nm_cientifico"))
+                            .setNomeEspecie(rs.getString("nm_especie"))
+                            .setCor(rs.getString("ds_cor"))
+                            .setCodigoChip(rs.getString("ds_chip"))
+                            .setCodigoTatuagem(rs.getString("ds_tatuagem"))
+                            .setDataNascimento(rs.getObject("dt_nascimento", LocalDate.class))
+                            .setTamanhoPorte(rs.getString("ds_tamanho"))
+                            .setPeso(rs.getDouble("nr_peso"))
+                            .setTemperamento(rs.getString("ds_temperamento"))
+                            .setFoto(new Arquivo.Builder()
+                                    .setId(rs.getLong("cd_arquivo"))
+                                    .build()
+                            ).build())
+            );
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
     }
 
     @Override

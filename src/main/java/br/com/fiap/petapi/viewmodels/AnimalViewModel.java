@@ -7,6 +7,7 @@ import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 
@@ -63,5 +64,5 @@ public class AnimalViewModel {
     @Size(min = 3, max = 100)
     private String raca;
 
-    private Arquivo foto;
+    private MultipartFile foto;
 }

@@ -3,6 +3,7 @@ package br.com.fiap.petapi.controllers;
 import br.com.fiap.petapi.beans.UsuarioBean;
 import br.com.fiap.petapi.lib.util.SystemMessages;
 import br.com.fiap.petapi.models.Usuario;
+import br.com.fiap.petapi.responsemodel.UsuarioResponseModel;
 import br.com.fiap.petapi.services.UsuarioService;
 import br.com.fiap.petapi.viewmodels.PessoaViewModel;
 import io.swagger.v3.oas.annotations.Operation;
@@ -46,13 +47,20 @@ public class UsuarioController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = SystemMessages.OK_MESSAGE,
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = Usuario.class)))
+                            schema = @Schema(implementation = UsuarioResponseModel.class)))
     })
     @GetMapping
     public ResponseEntity<?> retornaInfo() {
         Optional<Usuario> usuario = usuarioService.retornaUsuarioAutenticado();
         if(usuario.isPresent()) {
-            return new ResponseEntity<>(usuario, HttpStatus.OK);
+            UsuarioResponseModel usuarioResponseModel = new UsuarioResponseModel();
+            usuarioResponseModel.setId(usuario.get().getId());
+            usuarioResponseModel.setNome(usuario.get().getPessoa().getNome());
+            usuarioResponseModel.setDataNascimento(usuario.get().getPessoa().getDataNascimento());
+            usuarioResponseModel.setCpf(usuario.get().getPessoa().getCpf());
+            usuarioResponseModel.setFoto("");
+
+            return new ResponseEntity<>(usuarioResponseModel, HttpStatus.OK);
         }
         return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
     }

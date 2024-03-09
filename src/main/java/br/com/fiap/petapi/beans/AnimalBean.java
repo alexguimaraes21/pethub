@@ -41,6 +41,25 @@ public class AnimalBean {
         return this.animalRepository.cadastrar(novoAnimal);
     }
 
+    public Animal atualizar(AnimalViewModel animalViewModel, long animalId) {
+        Animal novoAnimal = new Animal.Builder()
+                .setId(animalId)
+                .setNome(animalViewModel.getNome())
+                .setNomeEspecie(animalViewModel.getNomeEspecie())
+                .setNomeCientifico(animalViewModel.getNomeCientifico())
+                .setCor(animalViewModel.getCor())
+                .setCodigoChip(animalViewModel.getCodigoChip())
+                .setCodigoTatuagem(animalViewModel.getCodigoTatuagem())
+                .setDataNascimento(animalViewModel.getDataNascimento())
+                .setTamanhoPorte(animalViewModel.getTamanhoPorte())
+                .setPeso(animalViewModel.getPeso())
+                .setTemperamento(animalViewModel.getTemperamento())
+                .setRaca(animalViewModel.getRaca())
+                .setPessoa(usuarioService.retornaUsuarioAutenticado().get().getPessoa())
+                .build();
+        return this.animalRepository.atualizar(novoAnimal);
+    }
+
     public List<Animal> listarAnimais() {
         return this.animalRepository.listarTodos();
     }

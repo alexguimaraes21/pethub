@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.validator.constraints.br.CPF;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 
@@ -32,5 +33,5 @@ public class PessoaViewModel {
     @Past
     private LocalDate dataNascimento;
 
-    private Arquivo foto;
+    private MultipartFile foto;
 }
