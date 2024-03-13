@@ -1,6 +1,8 @@
 package br.com.fiap.petapi.repositories;
 
+import br.com.fiap.petapi.models.Animal;
 import br.com.fiap.petapi.models.HistoricoSaude;
+import br.com.fiap.petapi.models.Usuario;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -55,7 +57,7 @@ public class HistoricoSaudeRepository{
         params.addValue("animalId", animalId);
 
         String sql = "SELECT cd_historico_saude, dt_cadastro FROM " + HistoricoSaude.TABLE_NAME +
-                " WHERE cd_historico_saude = : historicoId AND cd_animal = :animalId";
+                " WHERE cd_historico_saude = :historicoId AND cd_animal = :animalId";
         try {
             return this.namedParameterJdbcTemplate.queryForObject(
                     sql,
@@ -83,5 +85,13 @@ public class HistoricoSaudeRepository{
                         .setId(rs.getLong("cd_historico_saude"))
                         .setCadastradoEm(rs.getObject("dt_cadastro", LocalDateTime.class))
                         .build());
+    }
+
+    public int remover(long historicoId, long animalId) {
+        MapSqlParameterSource param = new MapSqlParameterSource();
+        param.addValue("historicoId", historicoId);
+        param.addValue("animalId", animalId);
+        String sql = "DELETE FROM " + HistoricoSaude.TABLE_NAME + " WHERE cd_animal = :animalId AND cd_historico_saude = :historicoId";
+        return namedParameterJdbcTemplate.update(sql, param);
     }
 }
