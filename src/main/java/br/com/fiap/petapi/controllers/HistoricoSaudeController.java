@@ -93,7 +93,7 @@ public class HistoricoSaudeController {
             @ApiResponse(responseCode = "404", content = { @Content(schema = @Schema()) }),
             @ApiResponse(responseCode = "500", content = { @Content(schema = @Schema()) })
     })
-    @DeleteMapping("/detalhes")
+    @DeleteMapping
     public ResponseEntity<?> remover(
             @RequestParam(value = "historicoSaudeId", required = false) Long historicoSaudeId,
             @RequestParam(value = "animalId", required = false) Long animalId
