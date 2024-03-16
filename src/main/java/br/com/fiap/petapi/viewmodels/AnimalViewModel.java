@@ -19,20 +19,19 @@ import java.time.LocalDate;
 public class AnimalViewModel {
 
     @Valid
-    @NotNull
-    @Size(min = 3, max = 100)
+    @NotNull(message = "Campo Nome não deve ser nulo")
+    @Size(min = 3, max = 100, message = "Campo Nome deve ter no mínimo {min} e no máximo {max} caracteres")
     private String nome;
 
     private String nomeCientifico;
 
     @Valid
-    @NotNull
-    @Size(min = 3, max = 100)
+    @NotNull(message = "Campo Espécie não deve ser nulo")
+    @Size(min = 3, max = 100, message = "Campo Espécie deve ter no mínimo {min} e no máximo {max} caracteres")
     private String nomeEspecie;
 
     @Valid
-    @NotNull
-    @Size(min = 3, max = 100)
+    @Size(min = 3, max = 100, message = "Campo Cor deve ter no mínimo {min} e no máximo {max} caracteres")
     private String cor;
 
     private String codigoChip;
@@ -40,28 +39,23 @@ public class AnimalViewModel {
     private String codigoTatuagem;
 
     @Valid
-    @NotNull
-    @PastOrPresent
+    @PastOrPresent(message = "Campo Data de Nascimento não pode estar no futuro")
     private LocalDate dataNascimento;
 
     @Valid
-    @NotNull
-    @Size(min = 3, max = 100)
+    @Size(min = 3, max = 100, message = "Campo Porte deve ter no mínimo {min} e máximo {max} caracteres")
     private String tamanhoPorte;
 
     @Valid
-    @NotNull
-    @Positive
+    @Positive(message = "Campo Peso deve ser um valor positivo (Maior que zero)")
     private double peso;
 
     @Valid
-    @NotNull
-    @Size(min = 3, max = 100)
+    @Size(min = 3, max = 100, message = "Campo Temperamento deve ter no mínimo {min} e máximo {max} caracteres")
     private String temperamento;
 
     @Valid
-    @NotNull
-    @Size(min = 3, max = 100)
+    @Size(min = 3, max = 100, message = "Campo Raça deve ter no mínimo {min} e máximo {max} caracteres")
     private String raca;
 
     private MultipartFile foto;
