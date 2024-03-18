@@ -62,7 +62,7 @@ public class UsuarioController {
 
             return new ResponseEntity<>(usuarioResponseModel, HttpStatus.OK);
         }
-        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
     @Operation(summary = "Cadastra um Usuário", security = { @SecurityRequirement(name = "token") })

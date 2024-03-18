@@ -48,7 +48,7 @@ public class HistoricoSaudeController {
         if (historicoSaude != null) {
             return new ResponseEntity<>(historicoSaude, HttpStatus.OK);
         }
-        return new ResponseEntity<>("[]", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("[]", HttpStatus.OK);
     }
 
     @Operation(summary = "Retorna todo histórico de saúde de um animal", security = {@SecurityRequirement(name = "token")})
@@ -66,7 +66,7 @@ public class HistoricoSaudeController {
         if (!historicoSaude.isEmpty()) {
             return new ResponseEntity<>(historicoSaude, HttpStatus.OK);
         }
-        return new ResponseEntity<>("[]", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("[]", HttpStatus.OK);
     }
 
     @Operation(summary = "Cadastra um item no Prontuário", security = {@SecurityRequirement(name = "token")})
@@ -89,7 +89,7 @@ public class HistoricoSaudeController {
 
     @Operation(summary = "Remove item do histórico de saúde de um animal", security = {@SecurityRequirement(name = "token")})
     @ApiResponses({
-            @ApiResponse(responseCode = "200", content = { @Content(schema = @Schema()) }),
+            @ApiResponse(responseCode = "204", content = { @Content(schema = @Schema()) }),
             @ApiResponse(responseCode = "404", content = { @Content(schema = @Schema()) }),
             @ApiResponse(responseCode = "500", content = { @Content(schema = @Schema()) })
     })
@@ -102,6 +102,6 @@ public class HistoricoSaudeController {
         if (removido) {
             return new ResponseEntity<>("[]", HttpStatus.OK);
         }
-        return new ResponseEntity<>("[]", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("[]", HttpStatus.NO_CONTENT);
     }
 }

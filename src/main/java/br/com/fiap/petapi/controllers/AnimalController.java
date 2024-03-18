@@ -95,7 +95,7 @@ public class AnimalController {
             animalResponseModel.setTamanhoPorte(animal.get().getTamanhoPorte());
             return new ResponseEntity<>(animalResponseModel, HttpStatus.OK);
         }
-        return new ResponseEntity<>("[]", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("[]", HttpStatus.OK);
     }
 
     @Operation(summary = "Lista todos os Animais", security = {@SecurityRequirement(name = "token")})
@@ -129,7 +129,7 @@ public class AnimalController {
             }
             return new ResponseEntity<>(animaisResponseModel, HttpStatus.OK);
         }
-        return new ResponseEntity<>("[]", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>("[]", HttpStatus.OK);
     }
 
     @Operation(summary = "Remove um animal", security = {@SecurityRequirement(name = "token")})
