@@ -11,7 +11,7 @@ pipeline {
     stages {
         stage('Build Application') {
             steps {
-                sh 'mvn clean package'
+                sh './mvnw clean package'
             }
         }
         stage('Build Multi-Arch Images') {
