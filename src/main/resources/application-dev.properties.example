@@ -31,9 +31,9 @@ spring.jackson.serialization.WRITE_DATES_AS_TIMESTAMPS=false
 spring.jackson.default-property-inclusion=non-null
 
 # Database Config
-spring.datasource.url=jdbc:postgresql://ip_postgresql:5432/db_name?connectionTimeZone=America/Sao_Paulo
-spring.datasource.username=username
-spring.datasource.password=password
+spring.datasource.url=jdbc:postgresql://192.168.20.11:5432/pet?connectionTimeZone=America/Sao_Paulo
+spring.datasource.username=cgtec
+spring.datasource.password=cgtec
 spring.datasource.driver-class-name=org.postgresql.Driver
 spring.datasource.hikari.pool-name=pet-dev
 spring.datasource.hikari.maximum-pool-size=5

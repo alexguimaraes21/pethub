@@ -9,6 +9,11 @@ pipeline {
     }
 
     stages {
+        stage('Gerando Arquivo de Configuração de ambiente DEV para fazer o Build e Testes') {
+            steps {
+                sh 'cp src/main/resources/application-dev.properties.example src/main/resources/application-dev.properties'
+            }
+        }
         stage('Build Application') {
             steps {
                 sh './mvnw clean package'
