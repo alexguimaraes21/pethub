@@ -26,7 +26,7 @@ pipeline {
                     withCredentials([usernamePassword(credentialsId: 'e5240369-fe46-447d-8e3e-b9d34eab3250', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                         sh """
                         # Loga no Docker Registry usando as variáveis de ambiente injetadas
-                        docker login ${DOCKER_REGISTRY} --u ${DOCKER_USER} -p ${DOCKER_PASS}
+                        docker login ${DOCKER_REGISTRY} -u ${DOCKER_USER} -p ${DOCKER_PASS}
 
                         # Cria a imagem para a arquitetura RISC (linux/arm64)
                         #docker buildx build --platform linux/arm64 -f Dockerfile.risc -t ${DOCKER_REGISTRY}/${IMAGE_NAME}:${VERSION}-risc --push .
