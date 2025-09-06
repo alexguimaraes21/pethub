@@ -24,16 +24,16 @@ pipeline {
                 script {
                     // Use o 'withCredentials' para acessar as credenciais do Jenkins
                     withCredentials([usernamePassword(credentialsId: 'e5240369-fe46-447d-8e3e-b9d34eab3250', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                        sh """
+                        sh '''
                         # Loga no Docker Registry usando as variáveis de ambiente injetadas
-                        echo "${DOCKER_PASS}" | docker login ${DOCKER_REGISTRY} --username ${DOCKER_USER} --password-stdin
+                        echo "$DOCKER_PASS" | docker login $DOCKER_REGISTRY --username "$DOCKER_USER" --password-stdin
 
                         # Cria a imagem para a arquitetura RISC (linux/arm64)
-                        #docker buildx build --platform linux/arm64 -f Dockerfile.risc -t ${DOCKER_REGISTRY}/${IMAGE_NAME}:${VERSION}-risc --push .
+                        #docker buildx build --platform linux/arm64 -f Dockerfile.risc -t $DOCKER_REGISTRY/cg-tecnologia/$IMAGE_NAME:$VERSION-risc --push .
 
                         # Cria a imagem para a arquitetura CISC (linux/amd64)
-                        docker buildx build --platform linux/amd64 -f Dockerfile.cisc -t ${DOCKER_REGISTRY}/${IMAGE_NAME}:${VERSION}-cisc --push .
-                        """
+                        docker buildx build --platform linux/amd64 -f Dockerfile.cisc -t $DOCKER_REGISTRY/cg-tecnologia/$IMAGE_NAME:$VERSION-cisc --push .
+                        '''
                     }
 
                 }
@@ -44,7 +44,7 @@ pipeline {
     post {
         always {
             // Limpa o ambiente
-            sh 'docker logout ${DOCKER_REGISTRY}'
+            sh 'docker logout $DOCKER_REGISTRY'
         }
     }
 }
