@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image: 'docker:20.10.16'
+            args: '-v /var/run/docker.sock/var/run/docker.sock'
+        }
+    }
 
     environment {
         // Altere para o seu registro e nome da imagem
