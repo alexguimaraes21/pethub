@@ -29,10 +29,10 @@ pipeline {
                         echo "$DOCKER_PASS" | docker login $DOCKER_REGISTRY --username "$DOCKER_USER" --password-stdin
 
                         # Cria a imagem para a arquitetura RISC (linux/arm64)
-                        #docker buildx build --platform linux/arm64 -f Dockerfile.risc -t $DOCKER_REGISTRY/cg-tecnologia/$IMAGE_NAME:$VERSION-risc --push .
+                        #docker buildx build --platform linux/arm64 -f Dockerfile-risc -t $DOCKER_REGISTRY/cg-tecnologia/$IMAGE_NAME:$VERSION-risc --push .
 
                         # Cria a imagem para a arquitetura CISC (linux/amd64)
-                        docker buildx build --platform linux/amd64 -f Dockerfile.cisc -t $DOCKER_REGISTRY/cg-tecnologia/$IMAGE_NAME:$VERSION-cisc --push .
+                        docker buildx build --platform linux/amd64 -f Dockerfile-cisc -t $DOCKER_REGISTRY/cg-tecnologia/$IMAGE_NAME:$VERSION-cisc --push .
                         '''
                     }
 
